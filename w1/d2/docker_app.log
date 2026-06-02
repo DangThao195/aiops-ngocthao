@@ -1,0 +1,678 @@
++ userns=
++ grep -Eqv '0[[:space:]]+0[[:space:]]+4294967295' /proc/self/uid_map
++ validate_userns
++ [[ -z '' ]]
++ return
++ configure_containerd
++ local snapshotter=
++ [[ -n '' ]]
++ [[ -z '' ]]
+++ stat -f -c %T /kind
++ container_filesystem=overlayfs
++ [[ overlayfs == \z\f\s ]]
++ [[ -n '' ]]
++ configure_proxy
++ mkdir -p /etc/systemd/system.conf.d/
++ [[ ! -z '' ]]
++ cat
++ fix_mount
++ echo 'INFO: ensuring we can execute mount/umount even with userns-remap'
+INFO: ensuring we can execute mount/umount even with userns-remap
+++ which mount
+++ which umount
++ chown root:root /usr/bin/mount /usr/bin/umount
+++ which mount
+++ which umount
++ chmod -s /usr/bin/mount /usr/bin/umount
++++ which mount
+++ stat -f -c %T /usr/bin/mount
++ [[ overlayfs == \a\u\f\s ]]
++ echo 'INFO: remounting /sys read-only'
+INFO: remounting /sys read-only
++ mount -o remount,ro /sys
++ echo 'INFO: making mounts shared'
+INFO: making mounts shared
++ mount --make-rshared /
++ retryable_fix_cgroup
+++ seq 0 10
++ for i in $(seq 0 10)
++ fix_cgroup
++ [[ -f /sys/fs/cgroup/cgroup.controllers ]]
++ echo 'INFO: detected cgroup v1'
+INFO: detected cgroup v1
++ local current_cgroup
+++ grep -E '^[^:]*:([^:]*,)?cpu(,[^,:]*)?:.*' /proc/self/cgroup
+++ cut -d: -f3
++ current_cgroup=/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ '[' /docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e = / ']'
++ echo 'WARN: cgroupns not enabled! Please use cgroup v2, or cgroup v1 with cgroupns enabled.'
+WARN: cgroupns not enabled! Please use cgroup v2, or cgroup v1 with cgroupns enabled.
++ echo 'INFO: fix cgroup mounts for all subsystems'
+INFO: fix cgroup mounts for all subsystems
++ local cgroup_subsystems
+++ findmnt -lun -o source,target -t cgroup
+++ grep -F /docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
+++ awk '{print $2}'
++ cgroup_subsystems='/sys/fs/cgroup/cpuset
+/sys/fs/cgroup/cpu
+/sys/fs/cgroup/cpuacct
+/sys/fs/cgroup/blkio
+/sys/fs/cgroup/memory
+/sys/fs/cgroup/devices
+/sys/fs/cgroup/freezer
+/sys/fs/cgroup/net_cls
+/sys/fs/cgroup/perf_event
+/sys/fs/cgroup/net_prio
+/sys/fs/cgroup/hugetlb
+/sys/fs/cgroup/pids
+/sys/fs/cgroup/rdma
+/sys/fs/cgroup/misc
+/sys/fs/cgroup/systemd'
++ local unsupported_cgroups
+++ findmnt -lun -o source,target -t cgroup
+++ grep_allow_nomatch -v -F /docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
+++ grep -v -F /docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
+++ awk '{print $2}'
+++ [[ 1 == 1 ]]
++ unsupported_cgroups=
++ '[' -n '' ']'
++ local cgroup_mounts
+++ grep -E -o '/[[:alnum:]].* /sys/fs/cgroup.*.*cgroup' /proc/self/mountinfo
++ cgroup_mounts='/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpuset rw,nosuid,nodev,noexec,relatime shared:249 master:31 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpu rw,nosuid,nodev,noexec,relatime shared:250 master:32 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpuacct rw,nosuid,nodev,noexec,relatime shared:251 master:33 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/blkio rw,nosuid,nodev,noexec,relatime shared:252 master:34 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime shared:253 master:36 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/devices rw,nosuid,nodev,noexec,relatime shared:254 master:37 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/freezer rw,nosuid,nodev,noexec,relatime shared:255 master:40 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/net_cls rw,nosuid,nodev,noexec,relatime shared:256 master:41 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/perf_event rw,nosuid,nodev,noexec,relatime shared:257 master:42 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/net_prio rw,nosuid,nodev,noexec,relatime shared:258 master:43 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/hugetlb rw,nosuid,nodev,noexec,relatime shared:259 master:46 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/pids rw,nosuid,nodev,noexec,relatime shared:260 master:48 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/rdma rw,nosuid,nodev,noexec,relatime shared:261 master:50 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/misc rw,nosuid,nodev,noexec,relatime shared:262 master:52 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/systemd rw,nosuid,nodev,noexec,relatime shared:264 master:56 - cgroup cgroup'
++ [[ -n /docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpuset rw,nosuid,nodev,noexec,relatime shared:249 master:31 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpu rw,nosuid,nodev,noexec,relatime shared:250 master:32 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpuacct rw,nosuid,nodev,noexec,relatime shared:251 master:33 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/blkio rw,nosuid,nodev,noexec,relatime shared:252 master:34 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime shared:253 master:36 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/devices rw,nosuid,nodev,noexec,relatime shared:254 master:37 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/freezer rw,nosuid,nodev,noexec,relatime shared:255 master:40 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/net_cls rw,nosuid,nodev,noexec,relatime shared:256 master:41 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/perf_event rw,nosuid,nodev,noexec,relatime shared:257 master:42 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/net_prio rw,nosuid,nodev,noexec,relatime shared:258 master:43 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/hugetlb rw,nosuid,nodev,noexec,relatime shared:259 master:46 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/pids rw,nosuid,nodev,noexec,relatime shared:260 master:48 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/rdma rw,nosuid,nodev,noexec,relatime shared:261 master:50 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/misc rw,nosuid,nodev,noexec,relatime shared:262 master:52 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/systemd rw,nosuid,nodev,noexec,relatime shared:264 master:56 - cgroup cgroup ]]
++ local mount_root
+++ head -n 1
+++ cut '-d ' -f1
++ mount_root=/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
+++ echo '/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpuset rw,nosuid,nodev,noexec,relatime shared:249 master:31 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpu rw,nosuid,nodev,noexec,relatime shared:250 master:32 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/cpuacct rw,nosuid,nodev,noexec,relatime shared:251 master:33 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/blkio rw,nosuid,nodev,noexec,relatime shared:252 master:34 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime shared:253 master:36 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/devices rw,nosuid,nodev,noexec,relatime shared:254 master:37 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/freezer rw,nosuid,nodev,noexec,relatime shared:255 master:40 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/net_cls rw,nosuid,nodev,noexec,relatime shared:256 master:41 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/perf_event rw,nosuid,nodev,noexec,relatime shared:257 master:42 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/net_prio rw,nosuid,nodev,noexec,relatime shared:258 master:43 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/hugetlb rw,nosuid,nodev,noexec,relatime shared:259 master:46 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/pids rw,nosuid,nodev,noexec,relatime shared:260 master:48 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/rdma rw,nosuid,nodev,noexec,relatime shared:261 master:50 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/misc rw,nosuid,nodev,noexec,relatime shared:262 master:52 - cgroup cgroup
+/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e /sys/fs/cgroup/systemd rw,nosuid,nodev,noexec,relatime shared:264 master:56 - cgroup cgroup'
+++ cut '-d ' -f 2
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/cpuset/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/cpuset/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/cpuset/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/cpuset /sys/fs/cgroup/cpuset/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/cpu/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/cpu/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/cpu/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/cpu /sys/fs/cgroup/cpu/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/cpuacct/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/cpuacct/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/cpuacct/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/cpuacct /sys/fs/cgroup/cpuacct/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/blkio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/blkio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/blkio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/blkio /sys/fs/cgroup/blkio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/memory/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/memory/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/memory/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/memory /sys/fs/cgroup/memory/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/devices/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/devices/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/devices/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/devices /sys/fs/cgroup/devices/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/freezer/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/freezer/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/freezer/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/freezer /sys/fs/cgroup/freezer/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/net_cls/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/net_cls/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/net_cls/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/net_cls /sys/fs/cgroup/net_cls/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/perf_event/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/perf_event/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/perf_event/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/perf_event /sys/fs/cgroup/perf_event/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/net_prio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/net_prio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/net_prio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/net_prio /sys/fs/cgroup/net_prio/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/hugetlb/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/hugetlb/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/hugetlb/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/hugetlb /sys/fs/cgroup/hugetlb/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/pids/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/pids/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/pids/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/pids /sys/fs/cgroup/pids/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/rdma/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/rdma/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/rdma/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/rdma /sys/fs/cgroup/rdma/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/misc/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/misc/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/misc/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/misc /sys/fs/cgroup/misc/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ for mount_point in $(echo "${cgroup_mounts}" | cut -d' ' -f 2)
++ local target=/sys/fs/cgroup/systemd/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ findmnt /sys/fs/cgroup/systemd/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mkdir -p /sys/fs/cgroup/systemd/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --bind /sys/fs/cgroup/systemd /sys/fs/cgroup/systemd/docker/dc3c9884b406162639cf25bd9e9d618f859c81132c2c5aa02a629329698c6f8e
++ mount --make-rprivate /sys/fs/cgroup
++ echo '/sys/fs/cgroup/cpuset
+/sys/fs/cgroup/cpu
+/sys/fs/cgroup/cpuacct
+/sys/fs/cgroup/blkio
+/sys/fs/cgroup/memory
+/sys/fs/cgroup/devices
+/sys/fs/cgroup/freezer
+/sys/fs/cgroup/net_cls
+/sys/fs/cgroup/perf_event
+/sys/fs/cgroup/net_prio
+/sys/fs/cgroup/hugetlb
+/sys/fs/cgroup/pids
+/sys/fs/cgroup/rdma
+/sys/fs/cgroup/misc
+/sys/fs/cgroup/systemd'
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/cpuset
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/cpuset
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/cpuset//kubelet
++ '[' /sys/fs/cgroup/cpuset == /sys/fs/cgroup/cpuset ']'
++ cat /sys/fs/cgroup/cpuset/cpuset.cpus
++ cat /sys/fs/cgroup/cpuset/cpuset.mems
++ mount --bind /sys/fs/cgroup/cpuset//kubelet /sys/fs/cgroup/cpuset//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/cpuset
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/cpuset
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/cpuset//kubelet.slice
++ '[' /sys/fs/cgroup/cpuset == /sys/fs/cgroup/cpuset ']'
++ cat /sys/fs/cgroup/cpuset/cpuset.cpus
++ cat /sys/fs/cgroup/cpuset/cpuset.mems
++ mount --bind /sys/fs/cgroup/cpuset//kubelet.slice /sys/fs/cgroup/cpuset//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/cpu
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/cpu
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/cpu//kubelet
++ '[' /sys/fs/cgroup/cpu == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/cpu//kubelet /sys/fs/cgroup/cpu//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/cpu
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/cpu
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/cpu//kubelet.slice
++ '[' /sys/fs/cgroup/cpu == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/cpu//kubelet.slice /sys/fs/cgroup/cpu//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/cpuacct
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/cpuacct
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/cpuacct//kubelet
++ '[' /sys/fs/cgroup/cpuacct == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/cpuacct//kubelet /sys/fs/cgroup/cpuacct//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/cpuacct
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/cpuacct
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/cpuacct//kubelet.slice
++ '[' /sys/fs/cgroup/cpuacct == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/cpuacct//kubelet.slice /sys/fs/cgroup/cpuacct//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/blkio
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/blkio
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/blkio//kubelet
++ '[' /sys/fs/cgroup/blkio == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/blkio//kubelet /sys/fs/cgroup/blkio//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/blkio
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/blkio
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/blkio//kubelet.slice
++ '[' /sys/fs/cgroup/blkio == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/blkio//kubelet.slice /sys/fs/cgroup/blkio//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/memory
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/memory
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/memory//kubelet
++ '[' /sys/fs/cgroup/memory == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/memory//kubelet /sys/fs/cgroup/memory//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/memory
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/memory
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/memory//kubelet.slice
++ '[' /sys/fs/cgroup/memory == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/memory//kubelet.slice /sys/fs/cgroup/memory//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/devices
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/devices
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/devices//kubelet
++ '[' /sys/fs/cgroup/devices == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/devices//kubelet /sys/fs/cgroup/devices//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/devices
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/devices
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/devices//kubelet.slice
++ '[' /sys/fs/cgroup/devices == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/devices//kubelet.slice /sys/fs/cgroup/devices//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/freezer
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/freezer
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/freezer//kubelet
++ '[' /sys/fs/cgroup/freezer == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/freezer//kubelet /sys/fs/cgroup/freezer//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/freezer
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/freezer
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/freezer//kubelet.slice
++ '[' /sys/fs/cgroup/freezer == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/freezer//kubelet.slice /sys/fs/cgroup/freezer//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/net_cls
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/net_cls
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/net_cls//kubelet
++ '[' /sys/fs/cgroup/net_cls == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/net_cls//kubelet /sys/fs/cgroup/net_cls//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/net_cls
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/net_cls
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/net_cls//kubelet.slice
++ '[' /sys/fs/cgroup/net_cls == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/net_cls//kubelet.slice /sys/fs/cgroup/net_cls//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/perf_event
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/perf_event
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/perf_event//kubelet
++ '[' /sys/fs/cgroup/perf_event == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/perf_event//kubelet /sys/fs/cgroup/perf_event//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/perf_event
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/perf_event
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/perf_event//kubelet.slice
++ '[' /sys/fs/cgroup/perf_event == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/perf_event//kubelet.slice /sys/fs/cgroup/perf_event//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/net_prio
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/net_prio
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/net_prio//kubelet
++ '[' /sys/fs/cgroup/net_prio == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/net_prio//kubelet /sys/fs/cgroup/net_prio//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/net_prio
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/net_prio
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/net_prio//kubelet.slice
++ '[' /sys/fs/cgroup/net_prio == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/net_prio//kubelet.slice /sys/fs/cgroup/net_prio//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/hugetlb
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/hugetlb
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/hugetlb//kubelet
++ '[' /sys/fs/cgroup/hugetlb == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/hugetlb//kubelet /sys/fs/cgroup/hugetlb//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/hugetlb
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/hugetlb
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/hugetlb//kubelet.slice
++ '[' /sys/fs/cgroup/hugetlb == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/hugetlb//kubelet.slice /sys/fs/cgroup/hugetlb//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/pids
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/pids
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/pids//kubelet
++ '[' /sys/fs/cgroup/pids == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/pids//kubelet /sys/fs/cgroup/pids//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/pids
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/pids
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/pids//kubelet.slice
++ '[' /sys/fs/cgroup/pids == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/pids//kubelet.slice /sys/fs/cgroup/pids//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/rdma
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/rdma
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/rdma//kubelet
++ '[' /sys/fs/cgroup/rdma == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/rdma//kubelet /sys/fs/cgroup/rdma//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/rdma
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/rdma
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/rdma//kubelet.slice
++ '[' /sys/fs/cgroup/rdma == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/rdma//kubelet.slice /sys/fs/cgroup/rdma//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/misc
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/misc
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/misc//kubelet
++ '[' /sys/fs/cgroup/misc == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/misc//kubelet /sys/fs/cgroup/misc//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/misc
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/misc
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/misc//kubelet.slice
++ '[' /sys/fs/cgroup/misc == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/misc//kubelet.slice /sys/fs/cgroup/misc//kubelet.slice
++ IFS=
++ read -r subsystem
++ mount_kubelet_cgroup_root /kubelet /sys/fs/cgroup/systemd
++ local cgroup_root=/kubelet
++ local subsystem=/sys/fs/cgroup/systemd
++ '[' -z /kubelet ']'
++ mkdir -p /sys/fs/cgroup/systemd//kubelet
++ '[' /sys/fs/cgroup/systemd == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/systemd//kubelet /sys/fs/cgroup/systemd//kubelet
++ mount_kubelet_cgroup_root /kubelet.slice /sys/fs/cgroup/systemd
++ local cgroup_root=/kubelet.slice
++ local subsystem=/sys/fs/cgroup/systemd
++ '[' -z /kubelet.slice ']'
++ mkdir -p /sys/fs/cgroup/systemd//kubelet.slice
++ '[' /sys/fs/cgroup/systemd == /sys/fs/cgroup/cpuset ']'
++ mount --bind /sys/fs/cgroup/systemd//kubelet.slice /sys/fs/cgroup/systemd//kubelet.slice
++ IFS=
++ read -r subsystem
++ [[ ! /sys/fs/cgroup/cpuset
+/sys/fs/cgroup/cpu
+/sys/fs/cgroup/cpuacct
+/sys/fs/cgroup/blkio
+/sys/fs/cgroup/memory
+/sys/fs/cgroup/devices
+/sys/fs/cgroup/freezer
+/sys/fs/cgroup/net_cls
+/sys/fs/cgroup/perf_event
+/sys/fs/cgroup/net_prio
+/sys/fs/cgroup/hugetlb
+/sys/fs/cgroup/pids
+/sys/fs/cgroup/rdma
+/sys/fs/cgroup/misc
+/sys/fs/cgroup/systemd = */sys/fs/cgroup/systemd* ]]
++ return
++ fix_machine_id
++ echo 'INFO: clearing and regenerating /etc/machine-id'
+INFO: clearing and regenerating /etc/machine-id
++ rm -f /etc/machine-id
++ systemd-machine-id-setup
+Initializing machine ID from D-Bus machine ID.
++ fix_product_name
++ [[ -f /sys/class/dmi/id/product_name ]]
++ fix_product_uuid
++ [[ ! -f /kind/product_uuid ]]
++ cat /proc/sys/kernel/random/uuid
++ [[ -f /sys/class/dmi/id/product_uuid ]]
++ [[ -f /sys/devices/virtual/dmi/id/product_uuid ]]
++ select_iptables
++ local mode num_legacy_lines num_nft_lines
+++ grep -c '^-'
+++ true
++ num_legacy_lines=0
+++ grep -c '^-'
++ num_nft_lines=6
++ '[' 0 -ge 6 ']'
++ mode=nft
++ echo 'INFO: setting iptables to detected mode: nft'
+INFO: setting iptables to detected mode: nft
++ update-alternatives --set iptables /usr/sbin/iptables-nft
++ echo 'retryable update-alternatives: --set iptables /usr/sbin/iptables-nft'
++ local 'args=--set iptables /usr/sbin/iptables-nft'
+++ seq 0 15
++ for i in $(seq 0 15)
++ /usr/bin/update-alternatives --set iptables /usr/sbin/iptables-nft
++ return
++ update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
++ echo 'retryable update-alternatives: --set ip6tables /usr/sbin/ip6tables-nft'
++ local 'args=--set ip6tables /usr/sbin/ip6tables-nft'
+++ seq 0 15
++ for i in $(seq 0 15)
++ /usr/bin/update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
++ return
++ enable_network_magic
++ local docker_embedded_dns_ip=127.0.0.11
++ local docker_host_ip
+++ head -n1 /dev/fd/63
++++ timeout 5 getent ahostsv4 host.docker.internal
+++ cut '-d ' -f1
++ docker_host_ip=
++ [[ -z '' ]]
+++ ip -4 route show default
+++ cut '-d ' -f3
++ docker_host_ip=192.168.49.1
++ iptables-save
++ iptables-restore
++ sed -e 's/-d 127.0.0.11/-d 192.168.49.1/g' -e 's/-A OUTPUT \(.*\) -j DOCKER_OUTPUT/\0\n-A PREROUTING \1 -j DOCKER_OUTPUT/' -e 's/--to-source :53/--to-source 192.168.49.1:53/g' -e 's/p -j DNAT --to-destination 127.0.0.11/p --dport 53 -j DNAT --to-destination 127.0.0.11/g'
++ cp /etc/resolv.conf /etc/resolv.conf.original
+++ sed -e s/127.0.0.11/192.168.49.1/g /etc/resolv.conf.original
++ replaced='# Generated by Docker Engine.
+# This file can be edited; Docker Engine will not make further changes once it
+# has been modified.
+
+nameserver 192.168.49.1
+options ndots:0
+
+# Based on host file: '\''/etc/resolv.conf'\'' (internal resolver)
+# ExtServers: [host(8.8.8.8)]
+# Overrides: []
+# Option ndots from: internal'
++ [[ '' == '' ]]
++ echo '# Generated by Docker Engine.
+# This file can be edited; Docker Engine will not make further changes once it
+# has been modified.
+
+nameserver 192.168.49.1
+options ndots:0
+
+# Based on host file: '\''/etc/resolv.conf'\'' (internal resolver)
+# ExtServers: [host(8.8.8.8)]
+# Overrides: []
+# Option ndots from: internal'
++ files_to_update=('/etc/kubernetes/manifests/etcd.yaml' '/etc/kubernetes/manifests/kube-apiserver.yaml' '/etc/kubernetes/manifests/kube-controller-manager.yaml' '/etc/kubernetes/manifests/kube-scheduler.yaml' '/etc/kubernetes/controller-manager.conf' '/etc/kubernetes/scheduler.conf' '/kind/kubeadm.conf' '/var/lib/kubelet/kubeadm-flags.env')
++ local files_to_update
++ local should_fix_certificate=false
+++ cut '-d ' -f1
+++ head -n1 /dev/fd/63
+++++ hostname
++++ timeout 5 getent ahostsv4 minikube
++ curr_ipv4=192.168.49.2
++ echo 'INFO: Detected IPv4 address: 192.168.49.2'
+INFO: Detected IPv4 address: 192.168.49.2
++ '[' -f /kind/old-ipv4 ']'
++ [[ -n 192.168.49.2 ]]
++ echo -n 192.168.49.2
+++ head -n1 /dev/fd/63
+++ cut '-d ' -f1
+++++ hostname
++++ timeout 5 getent ahostsv6 minikube
++ curr_ipv6=
++ echo 'INFO: Detected IPv6 address: '
+INFO: Detected IPv6 address: 
++ '[' -f /kind/old-ipv6 ']'
++ [[ -n '' ]]
++ false
+++ uname -a
++ echo 'entrypoint completed: Linux minikube 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64 GNU/Linux'
+entrypoint completed: Linux minikube 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64 GNU/Linux
++ exec /sbin/init
+systemd 252.39-1~deb12u1 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+Detected virtualization wsl.
+Detected architecture x86-64.
+[0;1;31mFailed to create symlink /sys/fs/cgroup/cpu: File exists[0m
+[0;1;31mFailed to create symlink /sys/fs/cgroup/cpuacct: File exists[0m
+[0;1;31mFailed to create symlink /sys/fs/cgroup/net_prio: File exists[0m
+[0;1;31mFailed to create symlink /sys/fs/cgroup/net_cls: File exists[0m
+
+Welcome to [1mDebian GNU/Linux 12 (bookworm)[0m!
+
+Queued start job for default target graphical.target.
+[[0;32m  OK  [0m] Created slice [0;1;39msystem-modpr…lice[0m - Slice /system/modprobe.
+[[0;32m  OK  [0m] Started [0;1;39msystemd-ask-passwo…quests to Console Directory Watch.
+[[0;32m  OK  [0m] Set up automount [0;1;39mproc-sys-…rmats File System Automount Point.
+[[0;32m  OK  [0m] Reached target [0;1;39mcryptsetup.…get[0m - Local Encrypted Volumes.
+[[0;32m  OK  [0m] Reached target [0;1;39mintegrityse…Local Integrity Protected Volumes.
+[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-online.target[0m - Network is Online.
+[[0;32m  OK  [0m] Reached target [0;1;39mpaths.target[0m - Path Units.
+[[0;32m  OK  [0m] Reached target [0;1;39mslices.target[0m - Slice Units.
+[[0;32m  OK  [0m] Reached target [0;1;39mswap.target[0m - Swaps.
+[[0;32m  OK  [0m] Reached target [0;1;39mveritysetup… - Local Verity Protected Volumes.
+[[0;32m  OK  [0m] Listening on [0;1;39msystemd-journ…socket[0m - Journal Audit Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39msystemd-journ…t[0m - Journal Socket (/dev/log).
+[[0;32m  OK  [0m] Listening on [0;1;39msystemd-journald.socket[0m - Journal Socket.
+         Mounting [0;1;39mdev-hugepages.mount[0m - Huge Pages File System...
+         Mounting [0;1;39msys-kernel-debug.…[0m - Kernel Debug File System...
+         Mounting [0;1;39msys-kernel-tracin…[0m - Kernel Trace File System...
+         Starting [0;1;39mmodprobe@configfs…m - Load Kernel Module configfs...
+         Starting [0;1;39mmodprobe@dm_mod.s…[0m - Load Kernel Module dm_mod...
+         Starting [0;1;39mmodprobe@fuse.ser…e[0m - Load Kernel Module fuse...
+         Starting [0;1;39mmodprobe@loop.ser…e[0m - Load Kernel Module loop...
+         Starting [0;1;39msystemd-journald.service[0m - Journal Service...
+         Starting [0;1;39msystemd-modules-l…rvice[0m - Load Kernel Modules...
+         Starting [0;1;39msystemd-remount-f…nt Root and Kernel File Systems...
+[[0;32m  OK  [0m] Mounted [0;1;39mdev-hugepages.mount[0m - Huge Pages File System.
+[[0;32m  OK  [0m] Mounted [0;1;39msys-kernel-debug.m…nt[0m - Kernel Debug File System.
+[[0;32m  OK  [0m] Mounted [0;1;39msys-kernel-tracing…nt[0m - Kernel Trace File System.
+modprobe@fuse.service: Deactivated successfully.
+[[0;32m  OK  [0m] Finished [0;1;39mmodprobe@fuse.service[0m - Load Kernel Module fuse.
+         Mounting [0;1;39msys-fs-fuse-conne…[0m - FUSE Control File System...
+[[0;32m  OK  [0m] Mounted [0;1;39msys-fs-fuse-connec…nt[0m - FUSE Control File System.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-remount-f…ount Root and Kernel File Systems.
+         Starting [0;1;39msystemd-sysusers.…rvice[0m - Create System Users...
+         Starting [0;1;39msystemd-update-ut…rd System Boot/Shutdown in UTMP...
+[[0;32m  OK  [0m] Started [0;1;39msystemd-journald.service[0m - Journal Service.
+         Starting [0;1;39msystemd-journal-f…h Journal to Persistent Storage...
+[[0;32m  OK  [0m] Finished [0;1;39mmodprobe@configfs…[0m - Load Kernel Module configfs.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-modules-l…service[0m - Load Kernel Modules.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-sysusers.service[0m - Create System Users.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-journal-f…ush Journal to Persistent Storage.
+         Starting [0;1;39msystemd-sysctl.se…ce[0m - Apply Kernel Variables...
+         Starting [0;1;39msystemd-tmpfiles-…ate Static Device Nodes in /dev...
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-update-ut…cord System Boot/Shutdown in UTMP.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-sysctl.service[0m - Apply Kernel Variables.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-tmpfiles-…reate Static Device Nodes in /dev.
+[[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs-pr…reparation for Local File Systems.
+[[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs.target[0m - Local File Systems.
+[[0;32m  OK  [0m] Finished [0;1;39mmodprobe@dm_mod.s…e[0m - Load Kernel Module dm_mod.
+[[0;32m  OK  [0m] Finished [0;1;39mmodprobe@loop.service[0m - Load Kernel Module loop.
+[[0;32m  OK  [0m] Reached target [0;1;39msysinit.target[0m - System Initialization.
+[[0;32m  OK  [0m] Started [0;1;39mpodman-auto-update…er[0m - Podman auto-update timer.
+[[0;32m  OK  [0m] Started [0;1;39msystemd-tmpfiles-c… Cleanup of Temporary Directories.
+[[0;32m  OK  [0m] Reached target [0;1;39mtimers.target[0m - Timer Units.
+[[0;32m  OK  [0m] Listening on [0;1;39mbuildkit.socket[0m - BuildKit.
+[[0;32m  OK  [0m] Listening on [0;1;39mdbus.socket[…- D-Bus System Message Bus Socket.
+         Starting [0;1;39mdocker.socket[0m - Docker Socket for the API...
+         Starting [0;1;39mpodman.socket[0m - Podman API Socket...
+[[0;32m  OK  [0m] Listening on [0;1;39mdocker.socket[0m - Docker Socket for the API.
+[[0;32m  OK  [0m] Listening on [0;1;39mpodman.socket[0m - Podman API Socket.
+[[0;32m  OK  [0m] Reached target [0;1;39msockets.target[0m - Socket Units.
+[[0;32m  OK  [0m] Reached target [0;1;39mbasic.target[0m - Basic System.
+         Starting [0;1;39mcontainerd.servic… - containerd container runtime...
+         Starting [0;1;39mminikube-automoun…ervice[0m - minikube automount...
+         Starting [0;1;39mpodman-auto-updat…0m - Podman auto-update service...
+         Starting [0;1;39mpodman-restart.se…th Restart Policy Set To Always...
+         Starting [0;1;39mpodman.service[0m - Podman API Service...
+         Starting [0;1;39mssh.service[0m - OpenBSD Secure Shell server...
+[[0;32m  OK  [0m] Started [0;1;39mpodman.service[0m - Podman API Service.
+[[0;32m  OK  [0m] Finished [0;1;39mminikube-automount.service[0m - minikube automount.
+[[0;32m  OK  [0m] Started [0;1;39mssh.service[0m - OpenBSD Secure Shell server.
+[[0;32m  OK  [0m] Started [0;1;39mcontainerd.service…0m - containerd container runtime.
+         Starting [0;1;39mdocker.service[0…er Application Container Engine...
+[[0;32m  OK  [0m] Finished [0;1;39mpodman-restart.se…With Restart Policy Set To Always.
+[[0;32m  OK  [0m] Finished [0;1;39mpodman-auto-updat…[0m - Podman auto-update service.
+         Starting [0;1;39mdbus.service[0m - D-Bus System Message Bus...
+[[0;32m  OK  [0m] Started [0;1;39mdbus.service[0m - D-Bus System Message Bus.
+[[0;32m  OK  [0m] Started [0;1;39mdocker.service[0m…cker Application Container Engine.
+[[0;32m  OK  [0m] Reached target [0;1;39mmulti-user.target[0m - Multi-User System.
+[[0;32m  OK  [0m] Reached target [0;1;39mgraphical.target[0m - Graphical Interface.
+         Starting [0;1;39msystemd-update-ut… Record Runlevel Change in UTMP...
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-update-ut… - Record Runlevel Change in UTMP.
