@@ -5,38 +5,38 @@
 
 ```mermaid
 flowchart LR
-    %% Định nghĩa các node
-    subgraph "1. Service Layer"
-        P[Payment Service\n(Java/Go)]
-        SDK[OpenTelemetry SDK]
+    %% Định nghĩa các node với cú pháp an toàn (dùng ngoặc kép và thẻ <br>)
+    subgraph S1 ["1. Service Layer"]
+        P["Payment Service<br>(Java/Go)"]
+        SDK["OpenTelemetry SDK"]
         P --> SDK
     end
 
-    subgraph "2. Collection"
-        Col[OTel Collector\n(DaemonSet)]
+    subgraph S2 ["2. Collection"]
+        Col["OTel Collector<br>(DaemonSet)"]
         SDK -->|gRPC/HTTP| Col
     end
 
-    subgraph "3. Transport"
-        Kafka[(Apache Kafka\nMessage Queue)]
+    subgraph S3 ["3. Transport"]
+        Kafka[("Apache Kafka<br>Message Queue")]
         Col -->|Produce| Kafka
     end
 
-    subgraph "4. Processing"
-        Flink[Apache Flink\n(Stream Processing)]
+    subgraph S4 ["4. Processing"]
+        Flink["Apache Flink<br>(Stream Processing)"]
         Kafka -->|Consume| Flink
     end
 
-    subgraph "5. Storage"
-        VM[(VictoriaMetrics\nTime-series DB)]
-        S3[(AWS S3\nCold Storage/Parquet)]
+    subgraph S5 ["5. Storage"]
+        VM[("VictoriaMetrics<br>Time-series DB")]
+        S3[("AWS S3<br>Cold Storage/Parquet")]
         Flink -->|Hot Data| VM
         Flink -->|Cold Data / Features| S3
     end
 
-    subgraph "6. Query / AI Layer"
-        Grafana[Grafana Dashboard]
-        ML[Anomaly Detection\nML Model]
+    subgraph S6 ["6. Query / AI Layer"]
+        Grafana["Grafana Dashboard"]
+        ML["Anomaly Detection<br>ML Model"]
         VM -->|PromQL| Grafana
         VM -->|Real-time Features| ML
         S3 -->|Batch Training| ML
