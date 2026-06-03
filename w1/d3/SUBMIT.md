@@ -1,7 +1,8 @@
 # ASSIGNMENT: DATA LAYER ARCHITECTURE & OBSERVABILITY PIPELINE
 
 ## 1. Sơ đồ Kiến trúc (Architecture Diagram)
-*(Bạn hãy chụp ảnh màn hình sơ đồ Mermaid ở Phase 1 hoặc chèn file ảnh kiến trúc của bạn vào đây. Ví dụ: `![Architecture Diagram](architecture.png)`)*
+
+![alt text](image.png)
 
 ## 2. Bảng Ước tính Chi phí (Cost Estimation)
 
