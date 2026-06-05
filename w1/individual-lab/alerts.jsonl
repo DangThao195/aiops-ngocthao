@@ -1,0 +1,3 @@
+{"timestamp": "2026-06-05T09:19:29.152+00:00", "type": "traffic_spike", "severity": "critical", "message": "Traffic Spike! RPS: 132.2, Queue Depth: 46."}
+{"timestamp": "2026-06-05T09:22:29.903+00:00", "type": "dependency_timeout", "severity": "critical", "message": "Dependency Timeout! Rate: 0.1%, Latency: 1277.2ms."}
+{"timestamp": "2026-06-05T09:22:39.960+00:00", "type": "dependency_timeout", "severity": "critical", "message": "Dependency Timeout! Rate: 0%, Latency: 1337.3ms."}
