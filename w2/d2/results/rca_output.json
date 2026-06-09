@@ -1,0 +1,79 @@
+{
+  "clusters_analyzed": 3,
+  "results": [
+    {
+      "cluster_id": "c-000-000",
+      "graph_top3": [
+        [
+          "payment-svc",
+          1.0
+        ],
+        [
+          "cart-svc",
+          0.5
+        ],
+        [
+          "checkout-svc",
+          0.44
+        ]
+      ],
+      "root_cause": "payment-svc",
+      "class": "ddos",
+      "confidence": 0.12,
+      "actions": [
+        "WAF rate-limit + Cloudflare proxy. Geographic rule."
+      ],
+      "reasoning": "Mẫu đặc trưng lỗi trùng khớp chuẩn xác ngữ nghĩa với sự cố lịch sử INC-2026-03-20 sau khi áp dụng bộ lọc nhiễu hạ tầng.",
+      "similar_incidents": [
+        "INC-2026-03-20",
+        "INC-2025-07-19",
+        "INC-2025-07-04"
+      ],
+      "method": "graph+advanced_knn"
+    },
+    {
+      "cluster_id": "c-000-001",
+      "graph_top3": [
+        [
+          "recommender-svc",
+          1.0
+        ]
+      ],
+      "root_cause": "recommender-svc",
+      "class": "data_pipeline_lag",
+      "confidence": 0.1,
+      "actions": [
+        "Add alert trên feature freshness. SLA cho upstream job."
+      ],
+      "reasoning": "Mẫu đặc trưng lỗi trùng khớp chuẩn xác ngữ nghĩa với sự cố lịch sử INC-2026-06-02 sau khi áp dụng bộ lọc nhiễu hạ tầng.",
+      "similar_incidents": [
+        "INC-2026-06-02",
+        "INC-2025-10-28",
+        "INC-2026-03-07"
+      ],
+      "method": "graph+advanced_knn"
+    },
+    {
+      "cluster_id": "c-000-002",
+      "graph_top3": [
+        [
+          "search-svc",
+          1.0
+        ]
+      ],
+      "root_cause": "search-svc",
+      "class": "cache_cold_start",
+      "confidence": 0.1,
+      "actions": [
+        "Pre-warm cache trên health check. Tăng warmup quota."
+      ],
+      "reasoning": "Mẫu đặc trưng lỗi trùng khớp chuẩn xác ngữ nghĩa với sự cố lịch sử INC-2026-05-25 sau khi áp dụng bộ lọc nhiễu hạ tầng.",
+      "similar_incidents": [
+        "INC-2026-05-25",
+        "INC-2026-01-29",
+        "INC-2025-12-01"
+      ],
+      "method": "graph+advanced_knn"
+    }
+  ]
+}
