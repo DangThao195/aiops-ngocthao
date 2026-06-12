@@ -1,29 +1,12 @@
-# Lab — Observability + AIOps Stack Redesign — Data Pack
+# Kiến trúc Tái thiết kế Hệ thống Giám sát & Vận hành AIOps - GeekShop
 
-This pack contains the inputs you need to do the architecture lab.
+Hồ sơ thiết kế này cung cấp giải pháp toàn diện nhằm giải quyết đồng thời hai ràng buộc cốt lõi từ CTO: Cắt giảm tối thiểu 40% chi phí vận hành (Đạt được 57.3% thực tế) và giảm thiểu thời gian xử lý sự cố MTTR xuống trên 30% thông qua việc ứng dụng chuẩn mở OpenTelemetry và hệ sinh thái lưu trữ phân cấp Grafana LGTM Stack.
 
-## Contents
-
-```
-data-pack/
-├── services.json              The 10-service topology + 4 stores + 17 edges
-├── current-stack.md           Vendor inventory + monthly cost breakdown
-├── incidents_history.json     29 historical incidents (MTTD / MTTR / class / actions)
-├── pain_points.md             10 operational pain points to address in your design
-├── current-architecture.png   Block diagram of how data flows today
-└── README.md                  This file
-```
-
-## How to read these inputs
-
-Start with `current-architecture.png` to see the data flow today. Then read `current-stack.md` to understand what each piece does and how much it costs. Then `pain_points.md` to understand what is actually broken. Finally browse `incidents_history.json` to ground your assumptions about what kind of incidents the system actually faces.
-
-You are **not** expected to inspect `incidents_history.json` programmatically. Reading the file as JSON in your editor and skimming is sufficient.
-
-## Inputs you are explicitly NOT given
-
-This is design work, not measurement work. You will need to make scaling assumptions explicit and defend them. You will not find tables of latency percentiles or ingest rate timeseries here — make the assumption, write it down, defend it.
-
-## What you produce
-
-See the handout for the full deliverable list. In short: one target-state architecture diagram, one component-decision table, one cost model, three ADRs, one twelve-week migration plan, one risk register, one local POC, and `FINDINGS.md`.
+## Bản đồ hướng dẫn đọc hồ sơ chấm điểm:
+1. **`architecture-target.png`**: Sơ đồ kiến trúc luồng dữ liệu mục tiêu hiển thị rõ ràng 3 tín hiệu (Metrics, Logs, Traces) đi qua màng lọc OTel Collector và quy trình gom cụm cảnh báo của Alertmanager.
+2. **`components.md`**: Bảng tổng hợp chi tiết lý do lựa chọn từng công nghệ thay thế và phân tích rủi ro hệ lụy nếu thay đổi ý định sau 6 tháng.
+3. **`cost-model.md`**: Bảng tính toán tài chính minh bạch so sánh từng dòng hóa đơn cũ và mới kèm theo bài toán phân tích độ nhạy cảm của ngân sách.
+4. **`adr/`**: Thư mục chứa 2 quyết định kỹ thuật cân não nhất về việc chuẩn hóa OpenTelemetry và cơ chế lấy mẫu dữ liệu vết tại biên (Tail-based Sampling).
+5. **`migration-plan.md`**: Lộ trình chuyển đổi chi tiết trong vòng 8 tuần cụ thể, thiết lập sẵn các cửa chặn Go/No-Go và quy trình quay xe khẩn cấp (Rollback) cho từng giai đoạn cắt luồng dữ liệu.
+6. **`risks.md`**: Ma trận quản trị 6 rủi ro kỹ thuật lớn nhất kèm theo định danh kỹ sư chịu trách nhiệm giảm thiểu rủi ro trực tiếp.
+7. **`FINDINGS.md`**: Tài liệu phản biện chuyên sâu trả lời 5 câu hỏi kiến trúc cốt lõi và vạch ra chiến lược chạy thử nghiệm (POC) để xác minh tính khả thi của hệ thống đệm dữ liệu.

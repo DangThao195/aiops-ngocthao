@@ -1,0 +1,10 @@
+# Risk Register
+
+| Risk Description | Likelihood | Impact | Specific Mitigation Strategy | Owner |
+| :--- | :--- | :--- | :--- | :--- |
+| **Tràn bộ nhớ (OOM) tại OTel Collector** do cơ chế giữ trace trong RAM để phân tích Tail-sampling khi gặp đỉnh tải traffic. | Medium | High | Cấu hình giới hạn bộ nhớ nghiêm ngặt bằng `memory_limiter` processor trong cấu trúc OTel yaml, tự động xả đệm (drop dữ liệu cũ) nếu RAM vượt ngưỡng an toàn 85%. | Platform Team |
+| **Kỹ sư trực ban không quen thuộc cú pháp mới (LogQL/PromQL)** làm kéo dài thời gian xử lý sự cố trong giai đoạn đầu. | High | Medium | Xây dựng sẵn tài liệu dịch cú pháp câu lệnh mẫu tương đương (Cheat-sheet) từ Splunk SPL sang LogQL dán trực tiếp lên cổng thông tin nội bộ của đội cứu hộ. | Team Lead Vận hành |
+| **Bỏ sót các cảnh báo quan trọng (Missing Alerts)** do sai lệch cú pháp khi dịch chuyển các luật cấu hình từ Datadog sang Mimir. | Medium | High | Chạy chạy song song cả 2 hệ thống alert trong 2 tuần; cấu hình Alertmanager gửi tin nhắn đối chứng vào một kênh Slack riêng biệt để so sánh độ lệch trước khi cắt hẳn hệ thống cũ. | SRE Team |
+| **Bùng nổ chi phí nạp dữ liệu tại Grafana Cloud** do xuất hiện các dòng lỗi lặp vô hạn (Log Storm) từ ứng dụng. | Medium | High | Thiết lập cấu hình ngưỡng giới hạn nạp cứng (Hard Ingestion Cap) và kích hoạt bộ quy tắc tự động cảnh báo biến động chi phí nếu dung lượng nạp tăng đột ngột `>30%` trong 1 giờ. | FinOps / Platform |
+| **Vi phạm điều khoản hợp đồng tự động gia hạn với nhà cung cấp cũ (Splunk/Datadog)** dẫn đến việc phải chịu phạt chi phí kép. | Low | High | Đặt lịch nhắc nhở kiểm tra tự động trên hệ thống lịch chung của công ty trước thời hạn 90 ngày thông báo hủy hợp đồng của Splunk để hoàn tất thủ tục pháp lý đúng hạn. | Platform Manager |
+| **Mất mát các log lưu trữ lịch sử dài hạn phục vụ công tác thanh tra bảo mật (Audit)** khi thực hiện tắt bỏ hoàn toàn cụm Splunk Cloud. | Low | Medium | Sử dụng công cụ xuất dữ liệu hàng loạt được cung cấp trong điều khoản hợp đồng để chuyển toàn bộ dữ liệu log 30 ngày gần nhất về kho lưu trữ AWS S3 nội bộ trước ngày cắt hợp đồng. | Security Team |
