@@ -1,0 +1,16 @@
+{
+  "captured_at": "2026-06-16T08:12:52.127821+00:00",
+  "duration_seconds": 15,
+  "metrics": {
+    "prometheus_http_requests_total": {
+      "mean": 0.33986928104575165,
+      "p99": 0.3333333333333333,
+      "samples": 3
+    },
+    "go_memstats_alloc_bytes": {
+      "mean": 18814952.0,
+      "p99": 18759952.0,
+      "samples": 3
+    }
+  }
+}

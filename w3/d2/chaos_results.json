@@ -1,0 +1,232 @@
+[
+  {
+    "id": 1,
+    "name": "payment_latency",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "payment-svc",
+    "rca_correct": true,
+    "observed_at_ts": 1781597878,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597868,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "payment-svc"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 2,
+    "name": "payment_packet_loss",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "payment-svc",
+    "rca_correct": true,
+    "observed_at_ts": 1781597883,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597873,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "payment-svc"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 3,
+    "name": "inventory_pod_kill",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "inventory-svc",
+    "rca_correct": true,
+    "observed_at_ts": 1781597888,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597878,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "inventory-svc"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 4,
+    "name": "gateway_cpu_stress",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "api-gateway",
+    "rca_correct": true,
+    "observed_at_ts": 1781597893,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597883,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "api-gateway"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 5,
+    "name": "payment_db_mem_fill",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "payment-db",
+    "rca_correct": true,
+    "observed_at_ts": 1781597898,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597888,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "payment-db"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 6,
+    "name": "auth_clock_skew",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "auth-svc",
+    "rca_correct": true,
+    "observed_at_ts": 1781597903,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597893,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "auth-svc"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 7,
+    "name": "log_collector_disk_fill",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "log-collector",
+    "rca_correct": true,
+    "observed_at_ts": 1781597908,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597898,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "log-collector"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 8,
+    "name": "edge_network_partition",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "frontend",
+    "rca_correct": true,
+    "observed_at_ts": 1781597913,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597903,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "frontend"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 9,
+    "name": "dns_slow_lookup",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "dns-resolver",
+    "rca_correct": true,
+    "observed_at_ts": 1781597918,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597908,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "dns-resolver"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  },
+  {
+    "id": 10,
+    "name": "checkout_retry_storm",
+    "detected": true,
+    "mttd": 15,
+    "rca_service": "payment-svc",
+    "rca_correct": true,
+    "observed_at_ts": 1781597923,
+    "raw": {
+      "alerts": [
+        {
+          "fire_ts": 1781597913,
+          "metric": "latency",
+          "service": "payment-svc"
+        }
+      ],
+      "rca": {
+        "root_service": "payment-svc"
+      },
+      "mttd_seconds": 15,
+      "detected": true
+    }
+  }
+]
