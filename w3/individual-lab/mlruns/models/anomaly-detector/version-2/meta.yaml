@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1781777848216
+current_stage: None
+description: null
+last_updated_timestamp: 1781777848216
+name: anomaly-detector
+run_id: 9f7fc481774b4bb88521933462513bf6
+run_link: null
+source: file:///H:/aiops-thao/w3/individual-lab/mlruns/847823613305726499/9f7fc481774b4bb88521933462513bf6/artifacts/model
+status: READY
+status_message: null
+storage_location: file:///H:/aiops-thao/w3/individual-lab/mlruns/847823613305726499/9f7fc481774b4bb88521933462513bf6/artifacts/model
+user_id: null
+version: 2

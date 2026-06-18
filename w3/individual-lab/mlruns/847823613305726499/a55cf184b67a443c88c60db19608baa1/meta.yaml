@@ -1,0 +1,15 @@
+artifact_uri: file:///H:/aiops-thao/w3/individual-lab/mlruns/847823613305726499/a55cf184b67a443c88c60db19608baa1/artifacts
+end_time: 1781777754200
+entry_point_name: ''
+experiment_id: '847823613305726499'
+lifecycle_stage: active
+run_id: a55cf184b67a443c88c60db19608baa1
+run_name: big-pug-502
+run_uuid: a55cf184b67a443c88c60db19608baa1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1781777738787
+status: 4
+tags: []
+user_id: asus laptop
