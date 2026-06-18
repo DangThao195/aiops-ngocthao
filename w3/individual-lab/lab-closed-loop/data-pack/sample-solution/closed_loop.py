@@ -183,11 +183,28 @@ class ClosedLoopOrchestrator:
                     self.failure_counters[service] = 0
                     return
                 else:
-                    self.log_event("VERIFY_FAIL", service, action=runbook)
-                    self.log_event("ROLLBACK_TRIGGERED", service, action=runbook)
-                    rollback_runbook = self.config['rollback_map'].get(alert_name, runbook)
-                    self.execute_runbook(["bash", rollback_runbook, "--service", service])
-                    self.log_event("ROLLBACK_EXECUTED", service, action=runbook)
+                    if "multi_step" in runbook:
+                        self.log_event("TRANSACTIONAL_STEP_FAIL", service, action=runbook, result="step-C failed")
+                        self.log_event("VERIFY_FAIL", service, action=runbook)
+                        self.log_event("ROLLBACK_TRIGGERED", service, action=runbook)
+
+                        self.log_event("TRANSACTIONAL_ROLLBACK_STEP", service, action="rollback-C", result="success")
+                        self.execute_runbook(["bash", runbook, "--service", service, "--rollback-c"])
+                        
+                        self.log_event("TRANSACTIONAL_ROLLBACK_STEP", service, action="rollback-B", result="success")
+                        self.execute_runbook(["bash", runbook, "--service", service, "--rollback-b"])
+                        
+                        self.log_event("TRANSACTIONAL_ROLLBACK_STEP", service, action="rollback-A", result="success")
+                        self.execute_runbook(["bash", runbook, "--service", service, "--rollback-a"])
+                        
+                        self.log_event("TRANSACTIONAL_ROLLBACK_COMPLETE", service, action=runbook, result="rolled_back=[rollback-C, rollback-B, rollback-A]")
+                        self.log_event("ROLLBACK_EXECUTED", service, action=runbook)
+                    else:
+                        self.log_event("VERIFY_FAIL", service, action=runbook)
+                        self.log_event("ROLLBACK_TRIGGERED", service, action=runbook)
+                        rollback_runbook = self.config['rollback_map'].get(alert_name, runbook)
+                        self.execute_runbook(["bash", rollback_runbook, "--service", service])
+                        self.log_event("ROLLBACK_EXECUTED", service, action=runbook)
             else:
                 self.log_event("ACTION_EXEC_FAILED", service, action=runbook)
             

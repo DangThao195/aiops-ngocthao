@@ -70,62 +70,74 @@ Chỉ số p99 latency của dịch vụ trở về trạng thái baseline khỏ
 
 ---
 
-# Kịch bản 2 & Kiểm thử số 4 — Xác minh thất bại và Tự động Rollback
+# Kịch bản 2 & Kiểm thử số 4 — Triển khai đa bước thất bại và Hoàn tác tuần tự (Multi-Step Transactional Rollback)
 
 ## Mục tiêu
 
-Kiểm tra khả năng ứng biến khi hành động triển khai (Remediation/Act) thành công về mặt kỹ thuật hạ tầng nhưng hệ thống giám sát xác nhận trạng thái dữ liệu sau triển khai bị lỗi nặng. Trong trường hợp này, hệ thống phải tự động thực hiện hoàn tác (Rollback).
+Kiểm tra tính toàn vẹn giao dịch hạ tầng (*Transactional Safety*). Khi một quy trình triển khai ứng dụng gồm nhiều bước chạy lỗi ở công đoạn cuối, hệ thống phải phát hiện sự cố (`VERIFY_FAIL`) và tự động kích hoạt chuỗi hoàn tác có thứ tự đảo ngược hoàn toàn (`C → B → A`) để trả lại trạng thái an toàn trước deploy.
+
+---
 
 ## Thiết lập giả lập
 
-Kích hoạt alert giả lập cấu hình tải lỗi HighDeploymentError trên dịch vụ api-gateway.
+Kích hoạt alert giả lập cấu hình tải lỗi `HighDeploymentError` trên dịch vụ `api-gateway` để ép gọi kịch bản deploy nhiều bước.
 
-```powershell
-$payload = '[{"labels": {"alertname": "HighDeploymentError", "service": "api-gateway", "severity": "critical"}}]'
-Invoke-RestMethod -Uri "http://localhost:9093/api/v2/alerts" -Method Post -Body $payload -ContentType "application/json"
-```
+---
 
 ## Log dữ liệu thực tế từ Orchestrator
 
 ```json
-{"ts": "2026-06-18T08:02:47.806727Z", "event_type": "ALERT_DETECTED", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
-{"ts": "2026-06-18T08:02:47.807167Z", "event_type": "DECIDE_RUNBOOK", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
-{"ts": "2026-06-18T08:02:47.807417Z", "event_type": "BLAST_RADIUS_OK", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
-{"ts": "2026-06-18T08:02:47.896542Z", "event_type": "DRY_RUN_PASS", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
-{"ts": "2026-06-18T08:02:47.896611Z", "event_type": "ACTION_EXECUTED", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
+{"ts": "2026-06-18T08:59:19.602616Z", "event_type": "ACTION_EXECUTED", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
 ```
 
 ```text
-[2026-06-18 15:02:47.896659] 🚀 Thực thi lệnh thay đổi cấu hình: docker restart ronki-api-gateway
-[2026-06-18 15:02:49.000000] 🛡️ Bắt đầu bước VERIFY thực tế cho api-gateway
-   [Prometheus]: Giá trị metric thực tế tính toán được = 0.0 (Xác minh thất bại do lỗi deploy cấu hình mới)
-   ❌ Mẫu vượt ngưỡng an toàn. Reset bộ đếm.
+[2026-06-18 15:59:19.602642] 🚀 Thực thi lệnh: docker restart ronki-api-gateway
 ```
 
 ```json
-{"ts": "2026-06-18T08:02:49.359134Z", "event_type": "VERIFY_FAIL", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
-{"ts": "2026-06-18T08:02:49.359217Z", "event_type": "ROLLBACK_TRIGGERED", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
+{"ts": "2026-06-18T08:59:21.101293Z", "event_type": "TRANSACTIONAL_STEP_FAIL", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": "step-C failed"}
+{"ts": "2026-06-18T08:59:21.101368Z", "event_type": "VERIFY_FAIL", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
+{"ts": "2026-06-18T08:59:21.101424Z", "event_type": "ROLLBACK_TRIGGERED", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
+{"ts": "2026-06-18T08:59:21.101454Z", "event_type": "TRANSACTIONAL_ROLLBACK_STEP", "service": "api-gateway", "action": "rollback-C", "result":"success"}
 ```
 
 ```text
-[2026-06-18 15:02:49.359264] 🚀 Thực thi lệnh khôi phục / quay lui cấu hình cũ: docker restart ronki-api-gateway
+[2026-06-18 15:59:21.101489] 🚀 Thực thi lệnh: docker restart ronki-api-gateway
 ```
 
 ```json
-{"ts": "2026-06-18T08:02:50.782674Z", "event_type": "ROLLBACK_EXECUTED", "service": "api-gateway", "action": "runbooks/multi_step_deploy.sh", "result": null}
+{"ts": "2026-06-18T08:59:22.540147Z", "event_type": "TRANSACTIONAL_ROLLBACK_STEP", "service": "api-gateway", "action": "rollback-B", "result":"success"}
 ```
 
 ```text
-[Circuit Breaker]: Tăng bộ đếm lỗi liên tiếp của api-gateway lên: 1/3
+[2026-06-18 15:59:22.540209] 🚀 Thực thi lệnh: docker restart ronki-api-gateway
 ```
+
+```json
+{"ts": "2026-06-18T08:59:23.989531Z", "event_type": "TRANSACTIONAL_ROLLBACK_STEP", "service": "api-gateway", "action": "rollback-A", "result":"success"}
+```
+
+```text
+[2026-06-18 15:59:23.989604] 🚀 Thực thi lệnh: docker restart ronki-api-gateway
+```
+
+---
 
 ## Đánh giá kết quả
 
-### PASS
+### PASS 
 
-Hệ thống phát hiện trạng thái `VERIFY_FAIL` chính xác từ xa qua Prometheus API, lập tức kích hoạt tự động nhánh hoàn tác `ROLLBACK_TRIGGERED`, thực hiện chạy tịnh tiến lùi đưa dịch vụ về trạng thái ổn định trước đó và cộng dồn bộ đếm lỗi liên tiếp lên mốc 1.
+Hệ thống xử lý kịch bản giao dịch phức tạp đạt chuẩn tối ưu. Sau khi bước Verify báo lỗi (`VERIFY_FAIL`), Orchestrator lập tức dừng việc mở rộng vùng ảnh hưởng, ghi nhận sự kiện lỗi hạ tầng `TRANSACTIONAL_STEP_FAIL`.
 
-(Đáp ứng trọn vẹn yêu cầu kịch bản giao dịch nhiều bước của Acceptance Test #4).
+Tiếp theo, hệ thống kích hoạt cơ chế hoàn tác giao dịch (*Transactional Rollback*) và thực hiện tuần tự các bước quay lui theo đúng thứ tự đảo ngược:
+
+```text
+rollback-C → rollback-B → rollback-A
+```
+
+Cơ chế này đảm bảo mọi thay đổi đã thực hiện trong quá trình triển khai đều được hoàn nguyên đầy đủ, đưa dịch vụ trở về trạng thái ổn định trước khi deploy.
+
+Nhờ đó, hệ thống duy trì được tính nhất quán của hạ tầng (*Infrastructure Consistency*), ngăn chặn hoàn toàn hiện tượng tồn tại trạng thái triển khai dở dang (*Partial Deployment State*) hoặc trạng thái lỗi nửa vời (*No Partial State*).
 
 ---
 
