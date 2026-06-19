@@ -22,7 +22,7 @@ class ClosedLoopOrchestrator:
         self.action_history = []
         self.global_lock = threading.Lock()
         self.global_dry_run = False
-        print(f"[{datetime.now()}] 🚀 Orchestrator đã khởi động. Môi trường chuẩn hóa Windows Host.")
+        print(f"[{datetime.now()}] Orchestrator đã khởi động. Môi trường chuẩn hóa Windows Host.")
 
     def log_event(self, event_type, service, action=None, result=None, extra=None):
         log_entry = {

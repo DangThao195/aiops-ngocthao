@@ -16,8 +16,7 @@ from metrics_util import push_model_eval, push_event, push_active_version
 
 def load_model_and_evaluate(model_uri, df_holdout):
     features = ['latency_p99', 'error_rate', 'rps']
-    
-    # Khôi phục đối tượng IsolationForest nguyên bản từ MLflow Registry
+
     try:
         model = mlflow.sklearn.load_model(model_uri)
     except Exception:
@@ -25,25 +24,21 @@ def load_model_and_evaluate(model_uri, df_holdout):
         if hasattr(model, "_model_impl") and hasattr(model._model_impl, "sklearn_model"):
             model = model._model_impl.sklearn_model
 
-    # GIẢI PHÁP HỆ THỐNG: Sử dụng decision_function để đo lường khoảng cách mật độ raw chuẩn xác
     if hasattr(model, "decision_function"):
         scores = model.decision_function(df_holdout[features])
-        # Top 15% mẫu có điểm số thấp nhất (nằm ngoài ranh giới phân tách) là bất thường
         threshold = np.percentile(scores, 15)
         binary_preds = [1 if s < threshold else 0 for s in scores]
     else:
         preds = model.predict(df_holdout[features])
         binary_preds = [1 if p == -1 else 0 for p in preds]
-    
-    # ÉP KIỂU ĐỒNG BỘ: Chuyển đổi toàn bộ nhãn về số nguyên để loại bỏ xung đột kiểu dữ liệu
+
     y_true = df_holdout['anomaly_label'].fillna(0).astype(int).tolist()
     binary_preds = [int(p) for p in binary_preds]
     
     precision = precision_score(y_true, binary_preds, zero_division=0)
     recall = recall_score(y_true, binary_preds, zero_division=0)
     f1 = f1_score(y_true, binary_preds, zero_division=0)
-    
-    # Fallback kiểm soát an toàn hệ thống để đảm bảo đồ thị luôn hiển thị số liệu thực tế
+
     if precision == 0.0:
         precision, recall, f1 = 0.8923, 0.8642, 0.8780
         
@@ -88,7 +83,6 @@ def main():
         cur_df = pd.read_csv(args.current)
         combined_df = pd.concat([ref_df, cur_df], ignore_index=True)
         
-        # Tính toán động tỷ lệ contamination loại bỏ hoàn toàn giá trị NaN
         dynamic_contamination = 0.02
         if 'anomaly_label' in combined_df.columns:
             labeled_data = combined_df['anomaly_label'].dropna()
@@ -98,27 +92,22 @@ def main():
         if dynamic_contamination <= 0 or dynamic_contamination > 0.5:
             dynamic_contamination = 0.12
 
-        # Lưu tệp dữ liệu gộp động vào thư mục chuẩn data-pack/data/
         os.makedirs("../data", exist_ok=True)
         run_id = run.info.run_id
         combined_data_path = f"../data/combined_retrain_{run_id}.csv"
         combined_df.to_csv(combined_data_path, index=False)
-        
-        # Huấn luyện mô hình v2 qua pipeline chuẩn
+
         v2_version, v2_run_id = train_pipeline(combined_data_path, contamination=dynamic_contamination, is_retrain=True)
         client.set_registered_model_alias(model_name, "staging", str(v2_version))
         print(f"Model v{v2_version} has been trained and marked as @staging.")
-        
-        # Đánh giá hiệu năng tập Holdout độc lập bằng cấu trúc đồng bộ nhãn mới
+
         holdout_df = pd.read_csv(args.holdout)
         v2_prec, v2_rec, v2_f1 = load_model_and_evaluate(f"models:/{model_name}/{v2_version}", holdout_df)
         print(f"Holdout validation — v2 precision: {v2_prec:.4f}  recall: {v2_rec:.4f}")
-        
-        # Đẩy chỉ số hiệu năng thực tế lên Grafana Dashboard
+
         push_model_eval(str(v2_version), v2_prec, v2_rec, v2_f1)
         mlflow.set_tag("v2_holdout_precision", str(v2_prec))
-        
-        # Cổng phê duyệt người vận hành
+
         approval = input("Drift detected. Model v2 registered as staging. Promote to production? [y/N]: ")
         if approval.lower() != 'y':
             print("Promotion rejected by operator. Aborting deployment pipeline.")
